@@ -1,9 +1,8 @@
 {
-  "name": "my_2nd_app",
+  "name": "mythirdapp",
   "version": "0.0.1",
   "private": true,
   "dependencies": {
-    "@capacitor/android": "3.1.2",
     "@capacitor/app": "1.0.2",
     "@capacitor/core": "3.1.2",
     "@capacitor/haptics": "1.0.2",
