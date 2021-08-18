@@ -1,5 +1,7 @@
-import { IonButton, IonContent, IonDatetime, IonHeader, IonInput, IonItem, IonLabel, IonPage, IonRadio, IonRadioGroup, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonToast } from '@ionic/react';
+import { IonButton, IonContent, IonDatetime, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonRadio, IonRadioGroup, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonToast } from '@ionic/react';
+import { add } from 'ionicons/icons';
 import { useState } from 'react';
+import {insertCustomer} from '../databaseHandler'
 
 const Register: React.FC = () => {
   const [name, setName] = useState<string>('')
@@ -11,7 +13,10 @@ const Register: React.FC = () => {
   const [present,dismiss] = useIonToast()
 
   const registerClick = ()=>{
-    present('halo',2000)
+    const newCustomer = {name:name,country:country,
+                    languages:languages,dateOfBirth:dateOfBirth,gender:gender}
+    insertCustomer(newCustomer);
+    present('Insertion completed!',2000)
   }
   return (
     <IonPage>
@@ -57,9 +62,10 @@ const Register: React.FC = () => {
             </IonItem>
           </IonRadioGroup>
         </IonItem>
-        <IonButton expand="block" onClick={registerClick} >Register</IonButton>
+        <IonButton  expand="block" onClick={registerClick} >
+          <IonIcon slot="icon-only" icon={add}></IonIcon>
+          </IonButton>
       </IonContent>
-
     </IonPage>
   );
 };
