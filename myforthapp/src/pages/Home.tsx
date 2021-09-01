@@ -1,6 +1,20 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { IonContent, IonHeader, IonItem, IonList, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import { useEffect, useState } from 'react';
+
+import { getAllCustomers } from '../databaseHandler'
+import { Customer } from '../models';
 
 const Home: React.FC = () => {
+  const [customers, setCustomers] = useState<Customer[]>([])
+
+  async function fetchData() {
+    const allCustomer = await getAllCustomers();
+    setCustomers(allCustomer);
+  }
+  //run once evertime the page is rendered
+  useEffect(() => {
+    fetchData();
+  }, [])
   return (
     <IonPage>
       <IonHeader>
@@ -9,7 +23,15 @@ const Home: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
-        This is the home page
+        {customers &&
+          <IonList>
+            {
+              customers.map((c,i) =>
+                <IonItem button key={i}>{c.name}</IonItem>
+              )
+            }
+          </IonList>
+        }
       </IonContent>
     </IonPage>
   );
