@@ -7,6 +7,24 @@ initDB().then(() => {
   console.log("database initialized!")
 })
 
+export async function updateCustomer(customerToUpdate:Customer) {
+  const db = await openDB(DATABASE_NAME, 1)
+  const cus= await db.transaction("customers").
+        objectStore("customers").get(customerToUpdate.id!) as Customer
+  cus.name = customerToUpdate.name
+  cus.gender = customerToUpdate.gender
+  cus.languages = customerToUpdate.languages;
+  cus.country = customerToUpdate.country
+  cus.dateOfBirth = customerToUpdate.dateOfBirth
+  await db.put("customers",cus);
+
+}
+
+export async function deleteCustomer(id:number) {
+  const db = await openDB(DATABASE_NAME, 1)
+  await db.delete("customers",id)
+}
+
 export async function getCustomerById(id:number) {
   const db = await openDB(DATABASE_NAME, 1);
   const cus= await db.transaction("customers").objectStore("customers").get(id);

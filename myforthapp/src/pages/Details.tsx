@@ -1,49 +1,67 @@
 import { IonBackButton, IonButton, IonButtons, IonContent, IonDatetime, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonPage, IonRadio, IonRadioGroup, IonSelect, IonSelectOption, IonTitle, IonToolbar, useIonToast } from '@ionic/react';
-import { add } from 'ionicons/icons';
+import { addCircle, trashSharp } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router';
-import {insertCustomer,getCustomerById} from '../databaseHandler'
+import { useHistory, useParams } from 'react-router';
+import { insertCustomer, getCustomerById, deleteCustomer,updateCustomer } from '../databaseHandler'
 import { Customer } from '../models';
 
-interface MyParams{
-  id : string
+interface MyParams {
+  id: string
 }
 const Details: React.FC = () => {
-  const {id} = useParams<MyParams>()
+  const { id } = useParams<MyParams>()
 
   const [name, setName] = useState<string>('')
   const [country, setCountry] = useState('')
-  const [languages,setLangages] = useState<string[]>([]);
-  const [dateOfBirth,setDateOfBirth] = useState(new Date().toISOString());
+  const [languages, setLangages] = useState<string[]>([]);
+  const [dateOfBirth, setDateOfBirth] = useState(new Date().toISOString());
   const [gender, setGender] = useState('')
-  
-  const [present,dismiss] = useIonToast()
 
-  const registerClick = ()=>{
-    const newCustomer = {name:name,country:country,
-                    languages:languages,dateOfBirth:dateOfBirth,gender:gender}
-    insertCustomer(newCustomer);
-    present('Insertion completed!',2000)
+  const [present, dismiss] = useIonToast()
+  const history = useHistory();
+
+  const handleUpdate = () => {
+    const newCustomer = {
+      id : Number.parseInt(id),
+      name: name, country: country,
+      languages: languages, dateOfBirth: dateOfBirth, gender: gender
+    }
+    updateCustomer(newCustomer);
+    alert("Update done!")
+  }
+  function handleDelete() {
+    //call delete from database handle
+    const userConfirm = window.confirm("Are you sure to delete?");
+    if (userConfirm) {
+      deleteCustomer(Number.parseInt(id))
+      alert('deleteion done!')
+      history.goBack();
+    } else {
+      alert("You cancelled!")
+    }
   }
   async function fetchData() {
-    const customer = await getCustomerById(Number.parseInt(id))
+    const customer = await getCustomerById(Number.parseInt(id)) as Customer
     setName(customer.name);
     setCountry(customer.country)
     setDateOfBirth(customer.dateOfBirth)
     setLangages(customer.languages)
     setGender(customer.gender)
   }
-  useEffect(()=>{
+  useEffect(() => {
     fetchData();
-  },[])
+  }, [])
   return (
     <IonPage>
       <IonHeader>
         <IonToolbar>
-        <IonButtons slot="start">
-          <IonBackButton />
-        </IonButtons>
-        <IonTitle>Details {id}</IonTitle>
+          <IonButtons slot="start">
+            <IonBackButton />
+          </IonButtons>
+          <IonTitle color="warning">Details {id}</IonTitle>
+          <IonButton onClick={handleDelete} size="small" color="danger" slot="end">
+            <IonIcon slot="icon-only" icon={trashSharp}></IonIcon>
+          </IonButton>
         </IonToolbar>
       </IonHeader>
       <IonContent className="ion-padding">
@@ -60,7 +78,7 @@ const Details: React.FC = () => {
         </IonItem>
         <IonItem>
           <IonLabel position="stacked">Languages can speak</IonLabel>
-          <IonSelect value={languages} multiple={true} onIonChange={e=>setLangages(e.detail.value)}>
+          <IonSelect value={languages} multiple={true} onIonChange={e => setLangages(e.detail.value)}>
             <IonSelectOption value="Vietnamese">Vietnamese</IonSelectOption>
             <IonSelectOption value="Lao">Lao</IonSelectOption>
             <IonSelectOption value="English">English</IonSelectOption>
@@ -68,11 +86,11 @@ const Details: React.FC = () => {
         </IonItem>
         <IonItem>
           <IonLabel position="stacked">Date of birth</IonLabel>
-          <IonDatetime  onIonChange={e=>setDateOfBirth(e.detail.value!)} value={dateOfBirth}></IonDatetime>
+          <IonDatetime onIonChange={e => setDateOfBirth(e.detail.value!)} value={dateOfBirth}></IonDatetime>
         </IonItem>
         <IonItem>
           <IonLabel position="stacked">Gender</IonLabel>
-          <IonRadioGroup value={gender} onIonChange={e=>setGender(e.detail.value)}>
+          <IonRadioGroup value={gender} onIonChange={e => setGender(e.detail.value)}>
             <IonItem>
               <IonLabel><small>Male</small></IonLabel>
               <IonRadio value="Male"></IonRadio>
@@ -83,9 +101,9 @@ const Details: React.FC = () => {
             </IonItem>
           </IonRadioGroup>
         </IonItem>
-        <IonButton  expand="block" onClick={registerClick} >
-          <IonIcon slot="icon-only" icon={add}></IonIcon>
-          </IonButton>
+        <IonButton color="warning" expand="block" onClick={handleUpdate} >
+          <IonIcon slot="icon-only" icon={addCircle}></IonIcon>
+        </IonButton>
       </IonContent>
     </IonPage>
   );
