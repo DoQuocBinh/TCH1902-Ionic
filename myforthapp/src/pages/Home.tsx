@@ -1,10 +1,13 @@
-import { IonContent, IonHeader, IonItem, IonList, IonPage, IonRefresher, IonRefresherContent, IonTitle, IonToolbar } from '@ionic/react';
+import { IonButton, IonContent, IonHeader, IonItem, IonList, IonPage, IonRefresher, IonRefresherContent, IonTitle, IonToolbar, useIonPicker } from '@ionic/react';
 import { useEffect, useState } from 'react';
 
 import { getAllCustomers } from '../databaseHandler'
 import { Customer } from '../models';
 
 const Home: React.FC = () => {
+  const [present] = useIonPicker();
+  const [value, setValue] = useState('');
+
   const [customers, setCustomers] = useState<Customer[]>([])
 
   async function fetchData() {
@@ -42,6 +45,40 @@ const Home: React.FC = () => {
             }
           </IonList>
         }
+        <IonButton
+          expand="block"
+          onClick={() =>
+            present({
+              buttons: [
+                {
+                  text: 'Confirm',
+                  handler: (selected) => {
+                    setValue(selected.animal.value)
+                  },
+                },
+                {
+                  text: 'Cancel',
+                  handler: () => {
+                    //alert('You cancelled!')
+                  },
+                }
+              ],
+              columns: [
+                {
+                  name: 'animal',
+                  options: [
+                    { text: 'Dog', value: 'dog' },
+                    { text: 'Cat', value: 'cat' },
+                    { text: 'Bird', value: 'bird' },
+                  ],
+                },
+              ],
+            })
+          }
+        >
+          Show Picker
+        </IonButton>
+            {value}
       </IonContent>
     </IonPage>
   );
