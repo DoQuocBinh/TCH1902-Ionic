@@ -27,7 +27,7 @@ const Home: React.FC = () => {
           <IonList>
             {
               customers.map((c,i) =>
-                <IonItem button key={i}>{c.name}</IonItem>
+                <IonItem routerLink={'details/'+c.id} button key={i}>{c.name}</IonItem>
               )
             }
           </IonList>
