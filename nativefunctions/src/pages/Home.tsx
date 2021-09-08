@@ -8,7 +8,10 @@ const Home: React.FC = () => {
 
   const handleSelectPicture = (event: React.ChangeEvent<HTMLInputElement>)=>{
     if(event.target.files && event.target.files.length > 0){
-      alert('you selected: '+ event.target.files[0].name)
+      //alert('you selected: '+ event.target.files[0].name)
+      const url = URL.createObjectURL(event.target.files[0]);
+      setPictureURL(url);
+      console.log(url)
     }
   }
   return (
