@@ -1,7 +1,9 @@
 import { IonButton, IonContent, IonHeader, IonImg, IonInput, IonItem, IonLabel, IonList, IonPage, IonThumbnail, IonTitle, IonToolbar } from '@ionic/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import { getAllPets, insertPet } from '../databaseHandler';
+import {Camera,CameraResultType,CameraSource} from '@capacitor/camera'
+
 
 interface Pet {
   id?: string,
@@ -11,14 +13,27 @@ interface Pet {
 
 const Home: React.FC = () => {
   var musicPlayer: ReactAudioPlayer | null
-  const [pictureURL, setPictureURL] = useState<string>('')
+  var inputRef = useRef<HTMLInputElement>(null)
+  const [pictureURL, setPictureURL] = useState<string>('/assets/pictureHolder.jpg')
   const [picDescription, setPicDescription] = useState<string>('')
   const [myPets, setMyPets] = useState<Pet[]>([]);
+
+  
+  
+  async function takePicture() {
+    const cameraPhoto = await Camera.getPhoto({
+      resultType: CameraResultType.Uri,
+      source: CameraSource.Prompt,
+      quality: 40,
+    });
+    setPictureURL(cameraPhoto.webPath!)
+  }
 
   async function fetchData() {
     const pets = await getAllPets();
     setMyPets(pets);
   }
+
 
   useEffect(() => {
     fetchData()
@@ -63,17 +78,15 @@ const Home: React.FC = () => {
           <IonButton onClick={() => navigator.vibrate(2000)}>Vibrate</IonButton>
         </IonItem>
         <IonItem>
-          <IonLabel position="stacked">Picture description</IonLabel>
+          <input hidden ref={inputRef} type="file" accept="image/*" onChange={handleSelectPicture}></input>
+          <img src={pictureURL} onClick={() => inputRef.current?.click()} width="120" height="100" />
+        </IonItem>
+        <IonItem>
+          <IonLabel position="stacked" color="warning">Picture description</IonLabel>
           <IonInput onIonChange={e => setPicDescription(e.detail.value!)} ></IonInput>
         </IonItem>
         <IonItem>
-          <IonLabel position="stacked">Select a picture</IonLabel>
-          <input type="file" accept="image/*" onChange={handleSelectPicture}></input>
-        </IonItem>
-        <IonItem>
-          <img src={pictureURL} width="120" height="100" />
-        </IonItem>
-        <IonItem>
+          <IonButton onClick={takePicture}>Take picture from Camera</IonButton>
           <IonButton onClick={savePicture}>Upload picture</IonButton>
         </IonItem>
         {myPets &&
