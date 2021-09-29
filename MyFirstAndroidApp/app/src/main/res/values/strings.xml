@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">My First Android App</string>
+    <string name="enter_your_name">Enter your name</string>
+    <string name="sendKey">Send</string>
+</resources>
