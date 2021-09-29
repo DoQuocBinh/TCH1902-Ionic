@@ -2,7 +2,7 @@ import { IonButton, IonContent, IonHeader, IonImg, IonInput, IonItem, IonLabel, 
 import { useEffect, useRef, useState } from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 import { getAllPets, insertPet } from '../databaseHandler';
-import {Camera,CameraResultType,CameraSource} from '@capacitor/camera'
+import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
 
 
 interface Pet {
@@ -18,15 +18,20 @@ const Home: React.FC = () => {
   const [picDescription, setPicDescription] = useState<string>('')
   const [myPets, setMyPets] = useState<Pet[]>([]);
 
-  
-  
+
+
   async function takePicture() {
-    const cameraPhoto = await Camera.getPhoto({
-      resultType: CameraResultType.Uri,
-      source: CameraSource.Prompt,
-      quality: 40,
-    });
-    setPictureURL(cameraPhoto.webPath!)
+    try {
+      const cameraPhoto = await Camera.getPhoto({
+        resultType: CameraResultType.Uri,
+        source: CameraSource.Prompt,
+        quality: 40,
+      });
+      setPictureURL(cameraPhoto.webPath!)
+    } catch (error) {
+      console.log("User cancelled!")
+    }
+
   }
 
   async function fetchData() {
