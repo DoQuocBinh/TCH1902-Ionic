@@ -20,6 +20,12 @@ const Home: React.FC = () => {
   async function fetchData(){
     const result = await getAllPerson()
     setPersons(result)
+
+    //Example for search
+    // const result = await getAllPerson() as Person[]
+    // const nameToFind = "Cuong"
+    // const result2 = result.filter(p=>p.name==nameToFind)
+    // setPersons(result2)
   }
 
   //fetchData will run when page is rendered or everytime the variable refresh changes
