@@ -64,7 +64,7 @@ const Home: React.FC = () => {
          <IonItem>
            <IonLabel position="floating">Name</IonLabel>
            <IonInput onIonChange={e=>setName(e.detail.value!)}></IonInput>
-           {!checkName() && <p>Name is required</p>}
+           {!checkName() && <p className="my-label">Name is required</p>}
          </IonItem>
          <IonItem>
            <IonLabel position="floating">Job</IonLabel>
