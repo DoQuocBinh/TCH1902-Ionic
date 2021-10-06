@@ -1,5 +1,5 @@
 import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonList, IonPage, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar } from '@ionic/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { getAllPerson, insertPerson } from '../databaseHandler';
 import './Home.css';
 
@@ -13,24 +13,37 @@ const Home: React.FC = () => {
   const [name,setName] = useState('')
   const [job,setJob] = useState('')
   const [persons, setPersons]= useState<Person[]>([])
+  const [refresh,setRefresh] = useState(false)
+  const [checkValid,setCheckValid] = useState(false)
+  
 
   async function fetchData(){
     const result = await getAllPerson()
     setPersons(result)
   }
 
-  //fetchData will run when page is rendered
+  //fetchData will run when page is rendered or everytime the variable refresh changes
   useEffect(()=>{
     fetchData()
-  },[])
+  },[refresh])
+
+  function checkName(){
+    if (name.length==0 && checkValid) {
+      return false
+    }else
+      return true;
+  }
 
   async function handleSave(){
+    setCheckValid(true)
     const person = {name:name, job:job}
     if(name.trim().length==0){
       alert("Name is required!")
     }else{
        await insertPerson(person)
-    alert('Ok inserted!')
+       //false->true->false->true
+       setRefresh(!refresh)
+      
     }
   }
   return (
@@ -45,6 +58,7 @@ const Home: React.FC = () => {
          <IonItem>
            <IonLabel position="floating">Name</IonLabel>
            <IonInput onIonChange={e=>setName(e.detail.value!)}></IonInput>
+           {!checkName() && <p>Name is required</p>}
          </IonItem>
          <IonItem>
            <IonLabel position="floating">Job</IonLabel>
