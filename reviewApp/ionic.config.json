@@ -1,0 +1,7 @@
+{
+  "name": "reviewApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}

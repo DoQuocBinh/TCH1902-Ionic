@@ -1,0 +1,70 @@
+import { IonButton, IonContent, IonHeader, IonInput, IonItem, IonLabel, IonList, IonPage, IonSelect, IonSelectOption, IonText, IonTitle, IonToolbar } from '@ionic/react';
+import { useEffect, useState } from 'react';
+import { getAllPerson, insertPerson } from '../databaseHandler';
+import './Home.css';
+
+interface Person{
+  id? : number,
+  name:string,
+  job:string
+}
+
+const Home: React.FC = () => {
+  const [name,setName] = useState('')
+  const [job,setJob] = useState('')
+  const [persons, setPersons]= useState<Person[]>([])
+
+  async function fetchData(){
+    const result = await getAllPerson()
+    setPersons(result)
+  }
+
+  //fetchData will run when page is rendered
+  useEffect(()=>{
+    fetchData()
+  },[])
+
+  async function handleSave(){
+    const person = {name:name, job:job}
+    if(name.trim().length==0){
+      alert("Name is required!")
+    }else{
+       await insertPerson(person)
+    alert('Ok inserted!')
+    }
+  }
+  return (
+    <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Quick Review Ionic</IonTitle>
+        </IonToolbar>
+      </IonHeader>
+      <IonContent className="ionic-padding">
+       <IonList>
+         <IonItem>
+           <IonLabel position="floating">Name</IonLabel>
+           <IonInput onIonChange={e=>setName(e.detail.value!)}></IonInput>
+         </IonItem>
+         <IonItem>
+           <IonLabel position="floating">Job</IonLabel>
+           <IonSelect onIonChange={(e)=>setJob(e.detail.value)}>
+             <IonSelectOption value="Teacher">Teacher</IonSelectOption>
+             <IonSelectOption value="Student">Student</IonSelectOption>
+           </IonSelect>
+         </IonItem>
+           <IonButton onClick={handleSave} expand="full" color="secondary" >Save</IonButton>
+       </IonList>
+       {persons &&
+          <IonList>
+            {persons.map(p=>
+              <IonItem button key={p.id}>{p.name}</IonItem>
+              )}
+          </IonList>
+       }
+      </IonContent>
+    </IonPage>
+  );
+};
+//npm i idb
+export default Home;
